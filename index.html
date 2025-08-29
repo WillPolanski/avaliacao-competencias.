@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bunge | Avaliação de Competências</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <style>
+        :root {
+            --bunge-navy-blue: #043C5A;
+            --bunge-logo-blue: #002D6E;
+            --bunge-light-green: #9BC83C;
+            --bunge-dark-orange: #D28728;
+            
+            /* Light Mode */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #e9ecef;
+            --shadow-color: rgba(0, 0, 0, 0.04);
+            --header-main-bg: var(--bg-secondary);
+            --header-top-bg: var(--bg-secondary);
+            --header-top-text: #6c757d;
+        }
+
+        .dark-mode {
+            /* Dark Mode */
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #333;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --header-main-bg: #1e1e1e;
+            --header-top-bg: #1e1e1e;
+            --header-top-text: #a0a0a0;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Lato', 'Segoe UI', system-ui, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        
+        header { position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .header-top {
+            background-color: var(--header-top-bg);
+            padding: 8px 0;
+            border-bottom: 3px solid var(--bunge-light-green);
+        }
+        .header-top .wrap { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
+        .header-top a {
+            color: var(--header-top-text); text-decoration: none;
+            font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; transition: color 0.2s ease;
+        }
+        .header-top a:hover { color: var(--bunge-dark-orange); }
+
+        .header-main { background: var(--header-main-bg); padding: 20px 0; border-bottom: 1px solid var(--border-color); }
+        .header-main .wrap { display: flex; justify-content: space-between; align-items: center; }
+        
+        .header-title-block { text-align: left; }
+        .header-title-block h1 {
+             color: var(--bunge-navy-blue);
+             font-weight: 900; font-size: 1.8rem; letter-spacing: .5px;
+        }
+        .dark-mode .header-title-block h1 { color: var(--bunge-light-green); }
+        .header-title-block .sub { color: var(--text-secondary); opacity: 1; font-weight: 400; font-size: 1rem; }
+        
+        .bunge-logo { height: 35px; width: auto; }
+        
+        main { padding: 32px 0; }
+        
+        section.card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            margin: 24px auto;
+            box-shadow: 0 4px 16px var(--shadow-color);
+            animation: 0.6s ease-out forwards 1 slideUp;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 {
+            color: var(--bunge-navy-blue); margin-bottom: 24px; font-weight: 700;
+            font-size: 1.5rem; padding-bottom: 8px; display: inline-block;
+        }
+        .dark-mode h2 { color: var(--bunge-light-green); }
+
+        .grid { display: grid; gap: 20px; }
+        .g-12 { grid-template-columns: repeat(12, 1fr); }
+        .col-6 { grid-column: span 6; } .col-4 { grid-column: span 4; } .col-3 { grid-column: span 3; }
+        @media (max-width: 960px) { .col-4 { grid-column: span 6; } }
+        @media (max-width: 768px) { .col-6, .col-4, .col-3 { grid-column: span 12; } }
+
+        label { font-weight: 700; display: block; margin-bottom: 8px; color: var(--text-secondary); }
+        input[type="text"], input[type="number"] {
+            width: 100%; padding: 12px 16px; border: 1px solid var(--border-color);
+            border-radius: 8px; outline: none; background-color: var(--bg-primary);
+            color: var(--text-primary); transition: all 0.3s ease; font-size: 1rem;
+        }
+        input:read-only { background-color: var(--border-color); cursor: not-allowed; }
+        input:not(:read-only):focus { border-color: var(--bunge-dark-orange); box-shadow: 0 0 0 3px rgba(210, 135, 40, 0.25); }
+        
+        .id-card { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+        .avatar {
+            width: 100px; height: 100px; border-radius: 50%;
+            border: 3px solid var(--bunge-light-green);
+            overflow: hidden; flex-shrink: 0;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .small { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; display: block; }
+        
+        .cert-row { display: grid; grid-template-columns: 80px 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px; }
+        .cert-row label { margin: 0; }
+        
+        details { border: 1px solid var(--border-color); border-radius: 12px; margin: 10px 0; overflow: hidden; background: var(--bg-secondary); }
+        summary { list-style: none; padding: 16px 20px; font-weight: 700; color: var(--bunge-navy-blue); cursor: pointer; position: relative; }
+        .dark-mode summary { color: var(--bunge-light-green); }
+        summary::after { content: '+'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; font-weight: 300; transition: transform 0.3s ease; }
+        details[open] > summary::after { transform: translateY(-50%) rotate(45deg); }
+        .q { padding: 16px 20px; border-top: 1px solid var(--border-color); }
+        .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        .scale { display: flex; gap: 12px; align-items: center; }
+        .scale label { font-weight: 400; color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .scale input[type="radio"] { accent-color: var(--bunge-dark-orange); }
+
+        .btn { background: var(--bunge-navy-blue); color: #fff; border: none; border-radius: 8px; padding: 12px 24px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn.alt { background: var(--bunge-dark-orange); color: #fff; }
+        
+        .score-box { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: flex-start; }
+        @media (max-width: 900px) { .score-box { grid-template-columns: 1fr; } }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); text-align: left; vertical-align: middle; }
+        thead th { background-color: var(--bg-primary); font-weight: 700; }
+        tfoot th, tfoot td { font-weight: 700; }
+        tfoot tr:last-child th, tfoot tr:last-child td { border-bottom: none; }
+        td:last-child { text-align: right; font-weight: 700; }
+        
+        .rules-list { list-style-position: inside; padding-left: 0; }
+        .rules-list li { margin-bottom: 8px; }
+
+        footer { margin: 40px auto; padding: 20px; text-align: center; font-size: 0.9rem; color: var(--text-secondary); }
+
+        .theme-switch-wrapper { display: flex; align-items: center; }
+        .theme-switch { display: inline-block; height: 24px; position: relative; width: 48px; }
+        .theme-switch input { display:none; }
+        .slider { background-color: #555; bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0; transition: .4s; border-radius: 34px; }
+        .slider:before { background-color: #fff; bottom: 4px; content: ""; height: 16px; left: 4px; position: absolute; transition: .4s; width: 16px; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--bunge-light-green); }
+        input:checked + .slider:before { transform: translateX(24px); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="wrap">
+                <a href="#">Carreiras</a>
+                <a href="#">Imprensa</a>
+                <a href="#">Investidores</a>
+            </div>
+        </div>
+        <div class="header-main">
+            <div class="wrap">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0c/Bunge_Limited_Logo.svg" alt="Bunge Logo" class="bunge-logo">
+                <div class="header-title-block">
+                    <h1>Avaliação de Competências</h1>
+                    <p class="sub">Mapa de Jornada e Pilares de Competência</p>
+                </div>
+                <div class="theme-switch-wrapper">
+                    <label class="theme-switch" for="checkbox">
+                        <input type="checkbox" id="checkbox" />
+                        <div class="slider round"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <section class="card">
+            <h2>Identificação do Colaborador</h2>
+            <div class="id-card">
+                <div class="avatar"><img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=300" alt="Foto"></div>
+                <div class="grid g-12" style="flex:1">
+                    <div class="col-6"><label for="nome">Nome</label><input id="nome" type="text" value="William Martins de Oliveira"></div>
+                    <div class="col-6"><label for="cargo">Cargo</label><input id="cargo" type="text" value="Analista de Dados Senior" readonly></div>
+                    <div class="col-4"><label for="area">Área</label><input id="area" type="text" value="Gestão de Serviços BBS" readonly></div>
+                    <div class="col-4"><label for="coordenacao">Coordenação</label><input id="coordenacao" type="text" value="Gestão de Análise de Dados" readonly></div>
+                    <div class="col-4"><label for="gerencia">Gerência</label><input id="gerencia" type="text" value="Excelência Operacional" readonly></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Certificações do Colaborador</h2>
+            <div class="grid g-12">
+                <div class="col-3">
+                    <label for="qtdCerts">Quantidade de certificados</label>
+                    <input id="qtdCerts" type="number" min="0" max="10" step="1" value="3" />
+                    <span class="small">0-4 Início, 5-9 Meio, 10 Final de Jornada</span>
+                </div>
+                <div class="col-9">
+                    <label for="obsCerts">Observações gerais</label>
+                    <input id="obsCerts" type="text" placeholder="Ex.: Certificações internas + Externas (PMI, Scrum, Power BI, etc.)" />
+                </div>
+                <div class="col-12" id="certContainer"></div>
+            </div>
+        </section>
+        
+        <section class="card">
+            <h2>Questionário de Competências</h2>
+            <div id="pillars-container"></div>
+            <div class="row" style="margin-top:24px; justify-content:flex-start;">
+                <button class="btn" id="btnGerar">Gerar Resultado</button>
+                <button class="btn alt" id="btnLimpar">Limpar Respostas</button>
+            </div>
+        </section>
+
+        <section class="card" id="resultado" style="display:none;">
+            <h2>Resultado Simulado</h2>
+            <div class="score-box">
+                <div>
+                    <canvas id="radarChart"></canvas>
+                    <div style="margin-top: 24px;">
+                        <h3 style="margin-bottom: 12px; font-size: 1.2rem;">Comparativo de Pares</h3>
+                        <canvas id="peerComparisonChart" height="150"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <table>
+                        <thead><tr><th>Pilar</th><th>Score (1-5)</th></tr></thead>
+                        <tbody id="tblScores"></tbody>
+                        <tfoot>
+                            <tr><th>Média Geral</th><td id="avgGeral">-</td></tr>
+                            <tr><th>Jornada por Certificados</th><td id="jornada">-</td></tr>
+                        </tfoot>
+                    </table>
+                    <p class="small" style="margin-top: 16px;">Pilotos: pesos iguais entre pilares. Jornada definida exclusivamente pela quantidade de certificados.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Regras de Negócio Aplicadas</h2>
+            <ul class="rules-list">
+                <li>Pilares avaliados: Inovação, Interação Digital, Inovação Ideal, Soft Skills, Modelo Operacional, Melhoria Contínua, Gestão de Projetos.</li>
+                <li>Perguntas por pilar: 5 itens objetivos com escala Likert 1 a 5.</li>
+                <li>Pesos de pilares: iguais nesta versão do protótipo.</li>
+                <li>Score do pilar: média simples das respostas do pilar.</li>
+                <li>Média geral: média dos 7 pilares.</li>
+                <li>Jornada por certificados: 0–4 Início, 5–9 Meio, 10 Final.</li>
+                <li>Certificados: o número informado gera de 1 a 10 linhas com descrição e anexo opcional.</li>
+                <li>Radar: exibe o perfil do colaborador. Para apresentação, uma "média da gerência" é simulada para comparação.</li>
+            </ul>
+            <p class="small" style="margin-top: 16px;">Este arquivo é um mockup estático para apresentação executiva. Na implementação real, os dados seriam capturados via Microsoft Forms ou Power Apps e gravados no SharePoint para consumo no Power BI.</p>
+        </section>
+    </main>
+
+    <footer><div class="wrap">Desenvolvido por William Martins de Oliveira e Carolina Albuquerque. <br> Área de Gestão de Serviços BBS Gaspar Bunge.</div></footer>
+
+    <script>
+        // --- LOGIC (abbreviated for clarity, full logic remains the same) ---
+        const themeSwitch=document.getElementById("checkbox"),currentTheme=localStorage.getItem("theme");function setDarkMode(e){document.documentElement.classList.toggle("dark-mode",e),themeSwitch.checked=e}currentTheme?setDarkMode("dark"===currentTheme):setDarkMode(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches),themeSwitch.addEventListener("change",e=>{setDarkMode(e.target.checked),localStorage.setItem("theme",e.target.checked?"dark":"light")});
+        const PILLARS_DATA=[{key:"Inovação",questions:["Redesenhei tarefas repetitivas para reduzir etapas.","Quando um processo trava, proponho alternativas práticas.","Adaptei práticas de outras áreas com bons resultados.","Registrei experimentos antes de escalar uma mudança.","Participei ativamente de revisões de práticas."]},{key:"Interação Digital",questions:["Aprendo novas ferramentas com autonomia.","Sugeri automações que reduziram retrabalho.","Compartilhei boas práticas digitais com o time.","Em falhas, validei alternativas antes de abrir chamado.","Uso dados e painéis para decidir."]},{key:"Inovação Ideal",questions:["Comparei o \"como deveria ser\" com o fluxo atual.","Defini hipóteses e critérios de sucesso antes de mudar algo.","Considerei custo, risco e experiência do usuário.","Testei em pequena escala antes da adoção ampla.","Documentei resultados e próximos passos."]},{key:"Soft Skills",questions:["Mediei conflitos sem escalonamento desnecessário.","Ajustei a comunicação ao perfil do interlocutor.","Recebi feedback crítico como oportunidade.","Mantive assertividade sem perder respeito.","Assumi responsabilidades por falhas sob meu controle."]},{key:"Modelo Operacional",questions:["Relacionei meu trabalho com impactos em outras áreas.","Apontei gargalos e riscos do fluxo.","Treinei colegas no fluxo ponta a ponta.","Otimizei handoffs e reduzi retrabalho entre times.","Monitorei indicadores do processo além da minha tarefa."]},{key:"Melhoria Contínua",questions:["Registrei lições aprendidas e apliquei no ciclo seguinte.","Implantei pequenas melhorias com grande retorno.","Revisei resultados para prevenir repetição de erros.","Acompanhei indicadores de melhoria e metas.","Participei de retrospectivas com ações efetivas."]},{key:"Gestão de Projetos",questions:["Planejei etapas e priorizei entregas com restrição de recursos.","Replanejei prazos diante de imprevistos.","Identifiquei riscos relevantes e planos de mitigação.","Alinhei stakeholders e checkpoints de avanço.","Formalizei lições aprendidas do projeto."]}];
+        !function(){document.getElementById("pillars-container").innerHTML=PILLARS_DATA.map(e=>{let t=e.key.toLowerCase().replace(/\s/g,"");return`<details data-pilar="${e.key}"><summary>${e.key}</summary>${e.questions.map((e,a)=>`<div class="q"><div class="row"><label>${e}</label><div class="scale">${[1,2,3,4,5].map(e=>`<label><input type="radio" name="${t}${a+1}" value="${e}">${e}</label>`).join("")}</div></div></div>`).join("")}</details>`}).join("")}();
+        
+        // --- CERTIFICATIONS DYNAMIC ROWS ---
+        const qtdCertsInput = document.getElementById('qtdCerts');
+        const certContainer = document.getElementById('certContainer');
+        function renderCertRows(qtd) {
+            certContainer.innerHTML = '';
+            const count = Math.max(0, Math.min(10, Number(qtd) || 0));
+            for (let i = 1; i <= count; i++) {
+                const row = document.createElement('div');
+                row.className = 'cert-row';
+                row.innerHTML = `
+                    <label>Des ${i}</label>
+                    <input type="text" placeholder="Descrição do certificado ${i}">
+                    <input type="file">
+                `;
+                certContainer.appendChild(row);
+            }
+        }
+        qtdCertsInput.addEventListener('input', (e) => renderCertRows(e.target.value));
+        renderCertRows(qtdCertsInput.value); // Initial render
+
+        let radarChart,peerChart;const tblScoresEl=document.getElementById("tblScores"),avgGeralEl=document.getElementById("avgGeral"),jornadaEl=document.getElementById("jornada"),resultadoSection=document.getElementById("resultado");function calculateScores(){return PILLARS_DATA.map(e=>{let t,a=e.key.toLowerCase().replace(/\s/g,""),l=e.questions.map((e,t)=>{var a;return null===(a=document.querySelector(`input[name="${t}${a+1}"]:checked`))?void 0:a.value}).filter(Boolean).map(Number);return t=l.length?l.reduce((e,t)=>e+t,0)/l.length:3+.5*Math.random()-.25,{pilar:e.key,score:Number(t.toFixed(2))}})}
+        function renderResultado(){let e=calculateScores(),t=e.reduce((e,t)=>e+t.score,0)/e.length;tblScoresEl.innerHTML=e.map(e=>`<tr><td>${e.pilar}</td><td>${e.score}</td></tr>`).join(""),avgGeralEl.textContent=t.toFixed(2);
+        let a = document.getElementById('qtdCerts').value;
+        jornadaEl.textContent = a >= 10 ? 'Final de Jornada' : a >= 5 ? 'Meio de Jornada' : 'Início de Jornada';
+        let l=document.documentElement.classList.contains("dark-mode"),n=(e=>({responsive:!0,plugins:{legend:{labels:{color:l?"#fff":"#333"}}},scales:"radar"===e?{r:{angleLines:{color:l?"rgba(255,255,255,0.2)":"rgba(0,0,0,0.1)"},grid:{color:l?"rgba(255,255,255,0.2)":"rgba(0,0,0,0.1)"},pointLabels:{color:l?"#fff":"#333",font:{size:12}},ticks:{color:l?"#fff":"#333",backdropColor:"transparent",stepSize:1},suggestedMin:1,suggestedMax:5}}:{y:{beginAtZero:!0,max:5,grid:{color:l?"rgba(255,255,255,0.1)":"rgba(0,0,0,0.05)"},ticks:{color:l?"#fff":"#333"}},x:{grid:{display:!1},ticks:{color:l?"#fff":"#333"}}}}));radarChart&&radarChart.destroy(),radarChart=new Chart(document.getElementById("radarChart"),{type:"radar",data:{labels:e.map(e=>e.pilar),datasets:[{label:"Colaborador",data:e.map(e=>e.score),backgroundColor:"rgba(4, 60, 90, 0.2)",borderColor:"rgba(4, 60, 90, 1)",pointBackgroundColor:"rgba(4, 60, 90, 1)"},{label:"Média Gerência (sim.)",data:e.map(()=>Math.max(1,Math.min(5,t+.8*Math.random()-.4))),backgroundColor:"rgba(210, 135, 40, 0.2)",borderColor:"rgba(210, 135, 40, 1)",pointBackgroundColor:"rgba(210, 135, 40, 1)"}]},options:n("radar")}),peerChart&&peerChart.destroy(),peerChart=new Chart(document.getElementById("peerComparisonChart"),{type:"bar",data:{labels:["Sua Média","Média Cargo (sim.)","Média Empresa (sim.)"],datasets:[{label:"Score Médio",data:[t.toFixed(2),(t*.95).toFixed(2),(t*1.05).toFixed(2)],backgroundColor:["rgba(4, 60, 90, 0.7)","rgba(210, 135, 40, 0.7)","rgba(155, 200, 60, 0.7)"],borderColor:["rgba(4, 60, 90, 1)","rgba(210, 135, 40, 1)","rgba(155, 200, 60, 1)"],borderWidth:1}]},options:n("bar")}),resultadoSection.style.display="block",setTimeout(()=>resultadoSection.scrollIntoView({behavior:"smooth",block:"start"}),100)}
+        document.getElementById("btnGerar").addEventListener("click",renderResultado),document.getElementById("btnLimpar").addEventListener("click",()=>{document.querySelectorAll('input[type=radio]').forEach(e=>e.checked=!1),resultadoSection.style.display="none"});
+    </script>
+</body>
+</html>
